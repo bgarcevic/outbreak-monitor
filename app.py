@@ -263,8 +263,9 @@ data_table = html.Div(
 ##################################################################################################
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-app.title = "Covid-19 tracker"
 server = app.server
+app.title = "Covid-19 tracker"
+
 
 app.index_string = """<!DOCTYPE html>
 <html>
@@ -378,7 +379,7 @@ navbar = dbc.NavbarSimple(
 
 
 # left column with information, tables and newsfeed
-left_column = dbc.Col([html.Div([data_table])], md=4, width={"order": 1})
+left_column = dbc.Col([html.Div([data_table])], lg=4, width={"order": 1})
 
 # right column with visuals
 right_column = dbc.Col(
@@ -391,7 +392,7 @@ right_column = dbc.Col(
             ),
         ]
     ),
-    md=8,
+    lg=8,
     width={"order": 2},
 )
 
