@@ -27,7 +27,6 @@ bitarray=1.2.0=py37he774522_0
 bkcharts=0.2=py37_0
 black=19.3b0=py_0
 blas=1.0=mkl
-bleach=3.1.0=py37_0
 blosc=1.16.3=h7bd577a_0
 bokeh=1.4.0=py37_0
 boto=2.49.0=py37_0
@@ -215,8 +214,6 @@ py-opencv=4.2.0=py37h5ca1d4c_2
 pycodestyle=2.5.0=py37_0
 pycosat=0.6.3=py37he774522_0
 pycparser=2.19=py37_0
-pycrypto=2.6.1=py37hfa6e2cd_9
-pycryptodome=3.9.0=pypi_0
 pycurl=7.43.0.3=py37h7a1dbc1_0
 pyflakes=2.1.1=py37_0
 pygments=2.5.2=py_0
