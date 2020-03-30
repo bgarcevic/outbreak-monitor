@@ -1,0 +1,25 @@
+﻿Sources and inspiration:
+
+Author: Meinhard Ploner
+Title: Visualise COVID-19 case data using Python, Dash and Plotly
+Link: https://towardsdatascience.com/visualise-covid-19-case-data-using-python-dash-and-plotly-e58feb34f70f
+
+Author: Orhan Gazi Yalçın
+Title: How I Built a Dashboard with Dash and Plotly after being stuck in Europe’s Worst Coronavirus Outbreak
+Link: https://towardsdatascience.com/how-i-built-a-dashboard-with-dash-and-plotly-after-being-stuck-in-europes-worst-coronavirus-dc41aaeeca4b
+
+Author: Jun
+Title: Build A Dashboard To Track The Spread of Coronavirus Using Dash
+Link: https://towardsdatascience.com/build-a-dashboard-to-track-the-spread-of-coronavirus-using-dash-90364f016764
+
+Author: covid@nguy.dev
+Title: trackthevirus.info
+link: https://trackthevirus.info/
+
+Data source:
+
+CSSE at Johns Hopkins University Baltimore, MD https://systems.jhu.edu/
+Link: https://github.com/CSSEGISandData
+
+Built using dash:
+https://dash.plotly.com/
