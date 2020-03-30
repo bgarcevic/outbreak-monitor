@@ -15,7 +15,6 @@ import dash
 import dash_table
 import dash_core_components as dcc
 import dash_html_components as html
-import dash_daq as daq
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 
@@ -265,6 +264,7 @@ data_table = html.Div(
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.title = "Covid-19 tracker"
+server = app.server
 
 app.index_string = """<!DOCTYPE html>
 <html>
@@ -292,8 +292,6 @@ app.index_string = """<!DOCTYPE html>
         </footer>
     </body>
 </html>"""
-
-server = app.server
 
 modal = html.Div(
     [
