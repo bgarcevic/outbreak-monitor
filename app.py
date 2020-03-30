@@ -399,9 +399,30 @@ right_column = dbc.Col(
 
 body_row = html.Div([dbc.Row([left_column, right_column])])
 
+footer = html.Div(
+          id='my-footer',
+          style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '1%', 'marginTop': '.5%'},
+                 children=[
+                     html.Hr(style={'marginBottom': '.5%'},),
+                     html.P(style={'textAlign': 'center', 'margin': 'auto'},
+                            children=[' | ',
+                                      html.A('Developed by Boris with ❤️ in Copenhagen', href=''), ' | ',
+                                      html.A('About this dashboard', href='https://github.com/bgarcevic/outbreak-monitor',target='_blank'), " | ",
+                                    #   html.A('Report a bug', href='', target='_blank')
+                            ]
+                      ),
+                     html.P(style={'textAlign': 'center', 'margin': 'auto', 'marginTop': '.5%'},
+                            children=["Keep calm and stay home"]
+                      ),
+                     html.P(style={'textAlign': 'center', 'margin': 'auto', 'marginTop': '.5%'},
+                            children=[]
+                      )
+                  ]
+              )
+
 def serve_layout():
     return dbc.Container(
-        [html.Div(navbar), html.Div([cards, body_row])],
+        [html.Div(navbar), html.Div([cards, body_row]), footer],
         fluid=True,
         className="bg-light",
     )
