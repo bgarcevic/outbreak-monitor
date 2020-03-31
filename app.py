@@ -201,9 +201,21 @@ map_tabs = dcc.Tabs(
 )
 
 # Data table
+# table_all_data = (
+#     all_data[all_data["date"] == latest_date]
+#     .groupby(["Country/Region", "Province/State", "Lat", "Long"])
+#     .sum()
+#     .reset_index()
+#     .rename(
+#         columns={"confirmed": "Confirmed", "deaths": "Deaths", "recovered": "Recovered"}
+#     )
+#     .sort_values(by=["Confirmed"], ascending=False)
+#     .reset_index(drop=True)
+# )
+
 table_all_data = (
     all_data[all_data["date"] == latest_date]
-    .groupby(["Country/Region", "Province/State", "Lat", "Long"])
+    .groupby(["Country/Region"])
     .sum()
     .reset_index()
     .rename(
@@ -406,7 +418,7 @@ footer = html.Div(
                      html.Hr(style={'marginBottom': '.5%'},),
                      html.P(style={'textAlign': 'center', 'margin': 'auto'},
                             children=[' | ',
-                                      html.A('Developed by Boris with ❤️ in Copenhagen', href=''), ' | ',
+                                      html.A('Developed by Boris with ❤️ in Copenhagen', href='https://www.linkedin.com/in/boris-garcevic/'), ' | ',
                                       html.A('About this dashboard', href='https://github.com/bgarcevic/outbreak-monitor',target='_blank'), " | ",
                                     #   html.A('Report a bug', href='', target='_blank')
                             ]
