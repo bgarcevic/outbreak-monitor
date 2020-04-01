@@ -130,7 +130,10 @@ card_days = create_card(
     "Days since outbreak",
     days_since_outbreak,
     f"Countries infected: {infected_countries}/195",
-    f"Last updated: {latest_date:%d-%m-%Y}",
+    [
+        html.Span("Last updated: ", style={"font-weight": "bold"}),
+        html.Span(f"{latest_date:%d-%m-%Y}"),
+    ],
     "blue",
 )
 card_cases = create_card(
@@ -147,14 +150,20 @@ card_deaths = create_card(
     "Total Deaths",
     f"{confirmed_deaths_sum:,}",
     f"New: {deaths_operand}{deaths_difference} / {deaths_percent_change}%",
-    f"IFR: {incident_fatality_rate}%",
+    [
+        html.Span("IFR: ", style={"font-weight": "bold"}),
+        html.Span(f"{incident_fatality_rate:,}%"),
+    ],
     "gray",
 )
 card_recovered = create_card(
     "Total Recovered",
     f"{confirmed_recovered_sum:,}",
     f"New: {recovered_operand}{recovered_difference} / {recovered_percent_change}%",
-    f"RR: {recovery_rate}%",
+    [
+        html.Span("RR: ", style={"font-weight": "bold"}),
+        html.Span(f"{recovery_rate:,}%"),
+    ],
     "green",
 )
 cards = dbc.CardDeck(
@@ -163,6 +172,9 @@ cards = dbc.CardDeck(
 
 # cases over time figure
 time_series_grouped = all_data.groupby(["date"]).sum().reset_index()
+time_series_grouped_country = (
+    all_data.groupby(["Country/Region", "date"]).sum().reset_index()
+)
 time_series_controls = html.Div(
     [
         # dcc.Dropdown(
@@ -201,17 +213,6 @@ map_tabs = dcc.Tabs(
 )
 
 # Data table
-# table_all_data = (
-#     all_data[all_data["date"] == latest_date]
-#     .groupby(["Country/Region", "Province/State", "Lat", "Long"])
-#     .sum()
-#     .reset_index()
-#     .rename(
-#         columns={"confirmed": "Confirmed", "deaths": "Deaths", "recovered": "Recovered"}
-#     )
-#     .sort_values(by=["Confirmed"], ascending=False)
-#     .reset_index(drop=True)
-# )
 
 table_all_data = (
     all_data[all_data["date"] == latest_date]
@@ -240,6 +241,7 @@ data_table = html.Div(
             filter_action="native",
             sort_action="native",
             row_selectable="multi",
+            selected_rows=[],
             fixed_rows={"headers": True, "data": 0},
             style_as_list_view=True,
             style_cell={"font_family": "Helvetica Neue"},
@@ -412,25 +414,44 @@ right_column = dbc.Col(
 body_row = html.Div([dbc.Row([left_column, right_column])])
 
 footer = html.Div(
-          id='my-footer',
-          style={'marginLeft': '1.5%', 'marginRight': '1.5%', 'marginBottom': '1%', 'marginTop': '.5%'},
-                 children=[
-                     html.Hr(style={'marginBottom': '.5%'},),
-                     html.P(style={'textAlign': 'center', 'margin': 'auto'},
-                            children=[' | ',
-                                      html.A('Developed by Boris with ❤️ in Copenhagen', href='https://www.linkedin.com/in/boris-garcevic/'), ' | ',
-                                      html.A('About this dashboard', href='https://github.com/bgarcevic/outbreak-monitor',target='_blank'), " | ",
-                                    #   html.A('Report a bug', href='', target='_blank')
-                            ]
-                      ),
-                     html.P(style={'textAlign': 'center', 'margin': 'auto', 'marginTop': '.5%'},
-                            children=["Keep calm and stay home"]
-                      ),
-                     html.P(style={'textAlign': 'center', 'margin': 'auto', 'marginTop': '.5%'},
-                            children=[]
-                      )
-                  ]
-              )
+    id="my-footer",
+    style={
+        "marginLeft": "1.5%",
+        "marginRight": "1.5%",
+        "marginBottom": "1%",
+        "marginTop": ".5%",
+    },
+    children=[
+        html.Hr(style={"marginBottom": ".5%"},),
+        html.P(
+            style={"textAlign": "center", "margin": "auto"},
+            children=[
+                " | ",
+                html.A(
+                    "Developed by Boris with ❤️ in Copenhagen",
+                    href="https://www.linkedin.com/in/boris-garcevic/",
+                ),
+                " | ",
+                html.A(
+                    "About this dashboard",
+                    href="https://github.com/bgarcevic/outbreak-monitor",
+                    target="_blank",
+                ),
+                " | ",
+                #   html.A('Report a bug', href='', target='_blank')
+            ],
+        ),
+        html.P(
+            style={"textAlign": "center", "margin": "auto", "marginTop": ".5%"},
+            children=["Keep calm and stay home"],
+        ),
+        html.P(
+            style={"textAlign": "center", "margin": "auto", "marginTop": ".5%"},
+            children=[],
+        ),
+    ],
+)
+
 
 def serve_layout():
     return dbc.Container(
@@ -455,7 +476,9 @@ def toggle_modal(n1, n2, is_open):
 
 
 # Map Tabs control
-@app.callback(Output("map-figure", "children"), [Input("map-tabs", "value")])
+@app.callback(
+    Output("map-figure", "children"), [Input("map-tabs", "value"),],
+)
 def map_figure(tab):
     if tab == "confirmed":
         color_discrete_sequence = "red"
@@ -490,28 +513,44 @@ def map_figure(tab):
         size_max=50,
         height=350,
     )
-    map_figure.update_layout(mapbox_style="open-street-map")
-    map_figure.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    map_figure.update_layout(
+        mapbox_style="open-street-map", margin={"r": 0, "t": 0, "l": 0, "b": 0}
+    )
+
     return html.Div([dcc.Graph(figure=map_figure)])
 
 
 # Time series control
-@app.callback(Output("time-series-cases", "children"), [Input("yaxis-type", "value")])
-def time_series_control(radio_items_value):
+@app.callback(
+    Output("time-series-cases", "children"),
+    [
+        Input("yaxis-type", "value"),
+        Input("datatable-interactivity", "derived_virtual_data"),
+        Input("datatable-interactivity", "derived_virtual_selected_rows"),
+    ],
+)
+def time_series_control(radio_items_value, rows, derived_virtual_selected_rows):
+    # Which radiobutton has been chosen
     if radio_items_value == "Linear":
         log_y = False
     elif radio_items_value == "Log":
         log_y = True
 
-    def time_series(y, label_name, log_y, title, color):
+    if derived_virtual_selected_rows is not None:
+        table_rows = [rows[i] for i in derived_virtual_selected_rows]
+        country_rows = [item.get("Country/Region") for item in table_rows]
+    else:
+        country_rows = ""
+
+    def time_series(data_frame, y, label_name, log_y, title, color_discrete):
         time_series_figure = px.line(
-            time_series_grouped,
+            data_frame,
             x="date",
             y=y,
             labels={"date": "Date", y: label_name},
             log_y=log_y,
             title=title,
-            color_discrete_sequence=[color],
+            color_discrete_sequence=[color_discrete],
             render_mode="svg",
             height=350,
         )
@@ -524,19 +563,53 @@ def time_series_control(radio_items_value):
 
         return time_series_figure
 
-    times_series_cases = time_series(
-        "confirmed", "Confirmed", log_y, "Confirmed/Deaths/Recovered Timeline", "red"
-    )
-    times_series_cases.add_trace(
-        time_series("deaths", "Deaths", log_y, "Confirmed Case Timeline", "gray").data[
-            0
-        ]
-    )
-    times_series_cases.add_trace(
-        time_series(
-            "recovered", "Recovered", log_y, "Confirmed Case Timeline", "green"
-        ).data[0]
-    )
+    if len(country_rows) != 0:
+        times_series_cases = px.line(
+            time_series_grouped_country[time_series_grouped_country["Country/Region"].isin(country_rows)],
+            x="date",
+            y="confirmed",
+            labels={"date": "Date", "confirmed": "Confirmed"},
+            log_y=log_y,
+            title="Confirmed by Country Timeline",
+            render_mode="svg",
+            height=350,
+            color="Country/Region"
+        )
+        times_series_cases.update_layout(
+            margin={"r": 0, "t": 40, "l": 0, "b": 0},
+            xaxis_title="",
+            yaxis_title="",
+            hovermode="x",
+        )
+    else:
+        times_series_cases = time_series(
+            time_series_grouped,
+            "confirmed",
+            "Confirmed",
+            log_y,
+            "Confirmed/Deaths/Recovered Timeline",
+            "red",
+        )
+        times_series_cases.add_trace(
+            time_series(
+                time_series_grouped,
+                "deaths",
+                "Deaths",
+                log_y,
+                "Confirmed Case Timeline",
+                "gray",
+            ).data[0]
+        )
+        times_series_cases.add_trace(
+            time_series(
+                time_series_grouped,
+                "recovered",
+                "Recovered",
+                log_y,
+                "Confirmed Case Timeline",
+                "green",
+            ).data[0]
+        )
     times_series_cases.update_traces(mode="lines+markers")
 
     return dcc.Graph(figure=times_series_cases)
