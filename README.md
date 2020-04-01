@@ -1,4 +1,4 @@
-# Project Title
+# outbreak-monitor
 
 This public repository achives data and source code for building a dashboard for tracking spread of COVID-19 globally.
 
