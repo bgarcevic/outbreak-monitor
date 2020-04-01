@@ -4,6 +4,8 @@ This public repository achives data and source code for building a dashboard for
 
 Tools used include python, dash, and plotly.
 
+This is my first dashboard made in Python and it is still a work in progress.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
